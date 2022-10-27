@@ -1,6 +1,6 @@
 {
 
-let timeToMove = 2010
+let timeToMove = 1010
 let arr = []
 let cleanMode = true
 let size = 0
