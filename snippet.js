@@ -548,10 +548,10 @@
         clickUp.onclick = moveControls
         const controlsBtns = createNewElement('.control__buttons')
         const textMessage = createNewElement('.control__text-message')
-        const buttonCheck = createNewElement('button.control__button=Check it!') // isSlovable
+        const buttonCheck = createNewElement('button.control__button=Проверить!') // isSlovable
         buttonCheck.onclick = () => checkIt(textMessage, controls)
-        const buttonStart = createNewElement('button.control__button=Slove it!')
-        buttonStart.onclick = () => {sloveIt()}
+        const buttonStart = createNewElement('button.control__button=Решить!')
+        buttonStart.onclick = () => {solveIt()}
     
         const timeBlock = createNewElement('.control__time')
         const textTime = createNewElement('p.control__time-text=Скорость клика (мс):')
@@ -641,7 +641,7 @@
     
     // SLOVER
     
-    function sloveIt() {
+    function solveIt() {
         arr = []
         cleanMode = true
         size = 0
