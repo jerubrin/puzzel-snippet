@@ -117,7 +117,6 @@ function convertToNormalList(field){
         i++
     }
     size = Math.trunc(i**(1/2))
-    console.log(size)
     //Find by class
     let className = findTileBlock(field, 1).classList[0]
     return document.querySelectorAll('.'+className)
@@ -178,7 +177,6 @@ function leftClick() {
     let num = (_J + 1) < size ? arr[_I][_J + 1] : -1
     if(num == -1) return
     let index = flatArr.lastIndexOf(num)
-    console.log(isOtherWay)
     if(isOtherWay) {
         field[index].click()
     } else if(cleanMode) {
@@ -199,7 +197,6 @@ function rightClick() {
     let num = (_J - 1) >= 0 ? arr[_I][_J - 1] : -1
     if(num == -1) return
     let index = flatArr.lastIndexOf(num)
-    console.log(isOtherWay)
     if(isOtherWay) {
         field[index].click()
     } else if(cleanMode) {
@@ -220,7 +217,6 @@ function upClick() {
     let num = (_I + 1) < size ? arr[_I + 1][_J] : -1
     if(num == -1) return
     let index = flatArr.lastIndexOf(num)
-    console.log(isOtherWay)
     if(isOtherWay) {
         field[index].click()
     } else if(cleanMode) {
@@ -241,7 +237,6 @@ function downClick() {
     let num = (_I - 1) >= 0 ? arr[_I - 1][_J] : -1
     if(num == -1) return
     let index = flatArr.lastIndexOf(num)
-    console.log(isOtherWay)
     if(isOtherWay) {
         field[index].click()
     } else if(cleanMode) {
