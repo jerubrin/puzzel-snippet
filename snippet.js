@@ -97,6 +97,15 @@
                 [...resElement.children].map(it => Number(it.textContent)) :
                 [...resElement].map(it => Number(it.textContent)) 
             : []
+        if(parent == document.body) {
+            let listForCheck = !isOtherWay ? [...resElement.children] : [...resElement]
+            listForCheck.forEach(el => {
+                if(el.style.display == 'none') {
+                    el.style.setProperty('display', 'flex');
+                    el.style.setProperty('opacity', '0');
+                }
+            })
+        }
         if(parent == document.body 
             && flatArr.reduce((w, c, i) => w && (c == (i + 1) || c == 0), true)
         ) {
@@ -117,7 +126,6 @@
             }
             let newResElement = []
             
-            console.log(resElement.children)
             let flatArrNodes = !isOtherWay ? [...resElement.children] : [...resElement]
             let objArr = flatArrNodes.map(it => {return {
                 x: it.getBoundingClientRect().x,
@@ -131,9 +139,7 @@
                     .sort((a, b) => a.x - b.x)
                     .map(it => it.element)
             }
-            console.log(newResArray)
             isOtherWay = true
-            console.log(newResArray.flat())
             return newResArray.flat()
         }
         return resElement
@@ -578,7 +584,7 @@
                 let flatArr = arr.flat()
                 gridButtons = createNewElement('.grid-btns')
                 for(let i = 0; i < size * size; i++) {
-                    const gridElem = createNewElement(`button.grid-elem=${flatArr[i]}`);
+                    const gridElem = createNewElement(`button.grid-elem=${flatArr[i] != 0? flatArr[i] : ' '}`);
                     gridButtons.appendChild(gridElem)
                 }
                 controls.insertBefore(gridButtons,textMessage)
