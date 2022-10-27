@@ -9,6 +9,7 @@ let isSlovable = false
 let isStarted = false
 let controls;
 let gridButtons;
+let isOtherWay = false;
 
 // Create new element with one string
 // tag_name.class-name.another-class-name.how-many-that-you-need-classes=content
@@ -47,7 +48,7 @@ function createNewElements() {
 function findElenetsList(parent) {
     let resElement = null
     let find = null
-    if(parent.children.length < 7) {
+    if(parent.children.length < 8) {
         [...parent.children].forEach(element => {
             find = findElenetsList(element)
             resElement = find ? find : resElement
@@ -62,12 +63,70 @@ function findElenetsList(parent) {
             resElement = parent
         }
     }
+    if(parent == document.body && resElement == null) {
+        isOtherWay = true
+        resElement = tryToFindAnOtherWay(document.body)
+    }
     return resElement
+}
+
+function tryToFindAnOtherWay(parent) {
+    let resElement = null
+    let find = null
+    if(parent.children.length > 0) {
+        let str = parent.textContent
+        let numStr = str.split('').filter(it => it != ' ' && it != '\n').join('')
+        if(!isNaN(numStr) && Number(numStr) > 123456 ) {
+            resElement = convertToNormalList(parent)
+        } else {
+            [...parent.children].forEach(it => {
+                find = tryToFindAnOtherWay(it)
+                resElement = find ? find : resElement
+            })
+        }
+    }
+    return resElement
+}
+
+function findTileBlock(field, num) {
+    let resElement = null
+    let find = null
+    let str = field.textContent
+    if(str == num) {
+        resElement = field
+    } else if(field.children.length > 0) {
+        [...field.children].forEach(it => {
+            find = findTileBlock(it, num)
+            resElement = find ? find : resElement
+        })
+    }
+    return resElement
+}
+
+function convertToNormalList(field){
+    let i = 1
+    while(true) {
+        if(findTileBlock(field, i)) {
+            i++
+        } else {
+            break
+        }
+    }
+    i--
+    if(i**(1/2) != Math.trunc(i**(1/2))) {
+        i++
+    }
+    size = Math.trunc(i**(1/2))
+    console.log(size)
+    //Find by class
+    let className = findTileBlock(field, 1).classList[0]
+    return document.querySelectorAll('.'+className)
 }
 
 function setAllToMoves() {
     let field = findElenetsList(document.body)
-    if(field.firstChild.children.length == 0 
+    if(!isOtherWay 
+        && field.firstChild.children.length == 0 
         && field.lastChild.children.length == 0) {
         cleanMode = true
     } else {
@@ -84,7 +143,9 @@ function setAllToMoves() {
 }
 
 function getArrFromScreen(field) {
-    let flatArr = [...field.children].map(it => Number(it.textContent));
+    let flatArr = !isOtherWay ?
+        [...field.children].map(it => Number(it.textContent)) :
+        [...field].map(it => Number(it.textContent))
     if(flatArr.length**(1/2) != Math.trunc(flatArr.length**(1/2))) {
         withoutZeroMode = true
         flatArr.push(0)
@@ -109,13 +170,18 @@ function getArrFromScreen(field) {
 
 function leftClick() {
     let field = findElenetsList(document.body)
-    let flatArr = [...field.children].map(it => Number(it.textContent));
+    let flatArr = !isOtherWay ?
+        [...field.children].map(it => Number(it.textContent)) :
+        [...field].map(it => Number(it.textContent))
     if(flatArr.length % 2 == 1) flatArr.push(0)
     let [_I, _J] = getElementHere(0)
     let num = (_J + 1) < size ? arr[_I][_J + 1] : -1
     if(num == -1) return
     let index = flatArr.lastIndexOf(num)
-    if(cleanMode) {
+    console.log(isOtherWay)
+    if(isOtherWay) {
+        field[index].click()
+    } else if(cleanMode) {
         field.children[index].click()
     } else {
         field.children[index].firstChild.click()
@@ -126,12 +192,17 @@ function leftClick() {
 
 function rightClick() {
     let field = findElenetsList(document.body)
-    let flatArr = [...field.children].map(it => Number(it.textContent));
+    let flatArr = !isOtherWay ?
+        [...field.children].map(it => Number(it.textContent)) :
+        [...field].map(it => Number(it.textContent))
     let [_I, _J] = getElementHere(0)
     let num = (_J - 1) >= 0 ? arr[_I][_J - 1] : -1
     if(num == -1) return
     let index = flatArr.lastIndexOf(num)
-    if(cleanMode) {
+    console.log(isOtherWay)
+    if(isOtherWay) {
+        field[index].click()
+    } else if(cleanMode) {
         field.children[index].click()
     } else {
         field.children[index].firstChild.click()
@@ -142,12 +213,17 @@ function rightClick() {
 
 function upClick() {
     let field = findElenetsList(document.body)
-    let flatArr = [...field.children].map(it => Number(it.textContent));
+    let flatArr = !isOtherWay ?
+        [...field.children].map(it => Number(it.textContent)) :
+        [...field].map(it => Number(it.textContent))
     let [_I, _J] = getElementHere(0)
     let num = (_I + 1) < size ? arr[_I + 1][_J] : -1
     if(num == -1) return
     let index = flatArr.lastIndexOf(num)
-    if(cleanMode) {
+    console.log(isOtherWay)
+    if(isOtherWay) {
+        field[index].click()
+    } else if(cleanMode) {
         field.children[index].click()
     } else {
         field.children[index].firstChild.click()
@@ -158,12 +234,17 @@ function upClick() {
 
 function downClick() {
     let field = findElenetsList(document.body)
-    let flatArr = [...field.children].map(it => Number(it.textContent));
+    let flatArr = !isOtherWay ?
+        [...field.children].map(it => Number(it.textContent)) :
+        [...field].map(it => Number(it.textContent))
     let [_I, _J] = getElementHere(0)
     let num = (_I - 1) >= 0 ? arr[_I - 1][_J] : -1
     if(num == -1) return
     let index = flatArr.lastIndexOf(num)
-    if(cleanMode) {
+    console.log(isOtherWay)
+    if(isOtherWay) {
+        field[index].click()
+    } else if(cleanMode) {
         field.children[index].click()
     } else {
         field.children[index].firstChild.click()
@@ -340,9 +421,7 @@ style.innerHTML = `
     background: #23b1c0;
 }
 .controls__to-up {
-    flex-direction: column-reverse;
-    top: 0 !important;
-    bottom: auto;
+    display: none
 }
 `
 function sizeIsSetted() {
@@ -373,7 +452,7 @@ document.getElementsByTagName('head')[0].appendChild(style);
 function showControls() {
     controls = createNewElement('.control')
     const root = document.body
-    const clickUp = createNewElement('.control__position=△ △ △') //▽ ▽ ▽
+    const clickUp = createNewElement('.control__position=▽ ▽ ▽') //△ △ △
     clickUp.onclick = moveControls
     const controlsBtns = createNewElement('.control__buttons')
     const textMessage = createNewElement('.control__text-message')
@@ -413,8 +492,12 @@ function hideGrid() {
     }
 }
 function moveControls() {
-    this.textContent = this.textContent == '△ △ △' ? '▽ ▽ ▽' : '△ △ △'
-    controls.classList.toggle('controls__to-up')
+    this.textContent = this.textContent == '△ △ △' ? '▽ ▽ ▽' : '△ △ △';
+    [...controls.children].forEach((el, index) => {
+        if(index != 0) {
+            el.classList.toggle('controls__to-up')
+        }
+    })
 }
 
 // CHECKER
