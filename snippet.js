@@ -7,6 +7,8 @@ let size = 0
 let withoutZeroMode = false
 let isSlovable = false
 let isStarted = false
+let controls;
+let gridButtons;
 
 // Create new element with one string
 // tag_name.class-name.another-class-name.how-many-that-you-need-classes=content
@@ -76,7 +78,7 @@ function setAllToMoves() {
     let [_I, _J] = getElementHere(0)
     if(_I == -1 || _J == -1) {
         let [zI, zJ] = getElementHere(size**2)
-        arr[zI, zJ] = 0
+        arr[zI][zJ] = 0
     }
     showControls()
 }
@@ -87,9 +89,12 @@ function getArrFromScreen(field) {
         withoutZeroMode = true
         flatArr.push(0)
         size = Math.trunc(flatArr.length**(1/2))
+        sizeIsSetted()
         showDialogMessage('ВЫБЕРИТЕ ПОЗИЦИЮ ПУСТОГО ЭЛЛЕМЕНТА', setZeroInArr)
+    } else {
+        size = Math.trunc(flatArr.length**(1/2))
+        sizeIsSetted()
     }
-    size = Math.trunc(flatArr.length**(1/2))
     let arr =  new Array(size)
     let k = 0
     for(let i = 0; i < size; i++){
@@ -202,27 +207,6 @@ function showDialogMessage(message, fun, hideBack = false) {
             if(fun) fun()
         }, 600)
     }
-    let style = document.createElement('style')
-    style.innerHTML = `
-    .grid-btns {
-        display: grid;
-        margin: 10px auto;
-        grid-template-columns: repeat(${size}, 1fr);
-        aspect-ratio: 1/1;
-        max-width: 200px;
-        gap: 3px;
-    }
-    .grid-elem {
-        background: #97d0d182;
-        border: #5cb3ad75 solid 2px;
-        border-radius: 5px;
-    }
-    .grid-elem:hover {
-        background: #d6eeee;
-        border: #9ac1be solid 2px;
-    }
-    `
-    document.getElementsByTagName('head')[0].appendChild(style);
 }
 
 setAllToMoves()
@@ -329,30 +313,70 @@ style.innerHTML = `
     background: #6ddae2;
     color: #395d5f;
 }`
+function sizeIsSetted() {
+    let style2 = document.createElement('style')
+    style2.innerHTML = `
+    .grid-btns {
+        display: grid;
+        margin: 10px auto;
+        grid-template-columns: repeat(${size}, 1fr);
+        aspect-ratio: 1/1;
+        max-width: 200px;
+        gap: 3px;
+    }
+    .grid-elem {
+        background: #97d0d182;
+        border: #5cb3ad75 solid 2px;
+        border-radius: 5px;
+    }
+    .grid-elem:hover {
+        background: #d6eeee;
+        border: #9ac1be solid 2px;
+    }
+    `
+    document.getElementsByTagName('head')[0].appendChild(style2);
+}
 document.getElementsByTagName('head')[0].appendChild(style);
 
 function showControls() {
-    let root = document.body
-    const controls = createNewElement('.control')
+    controls = createNewElement('.control');
+    const root = document.body
     const controlsBtns = createNewElement('.control__buttons')
     const textMessage = createNewElement('.control__text-message')
     const buttonCheck = createNewElement('button.control__button=Check it!') // isSlovable
-    buttonCheck.onclick = () => checkIt(textMessage)
+    buttonCheck.onclick = () => checkIt(textMessage, controls)
     const buttonStart = createNewElement('button.control__button=Slove it!')
-    buttonStart.onclick = () => {checkIt(textMessage); sloveIt()}
+    buttonStart.onclick = () => {sloveIt()}
 
     controlsBtns.append(buttonCheck, buttonStart)
     controls.append(textMessage, controlsBtns)
     root.appendChild(controls)
 }
 
-function checkIt(textMessage) {
+function checkIt(textMessage, controls) {
     textMessage.textContent = checkGameArray() ? 'решаемый' : 'не решаемый'
+    let flatArr = arr.flat()
+    gridButtons = createNewElement('.grid-btns')
+    for(let i = 0; i < size * size; i++) {
+        const gridElem = createNewElement(`button.grid-elem=${flatArr[i]}`);
+        gridButtons.appendChild(gridElem)
+    }
+    controls.insertBefore(gridButtons,textMessage)
+    setTimeout(() => {
+        controls.onclick = hideGrid
+    }, 1)
+}
+function hideGrid() {
+    if(gridButtons) {
+        gridButtons.innerHTML = ''
+        try{controls.removeChild(gridButtons)}catch(e){}
+    }
 }
 
 // CHECKER
 let arr4check = []
 function checkGameArray() {
+    console.log(strfy(arr))
     arr4check = JSON.parse(JSON.stringify(arr))
     moveItUp()
     let number = arr4check.flat().map((it, i, a) => {
@@ -382,6 +406,7 @@ function moveItUp() {
 
 function sloveIt() {
     solution()
+    hideGrid()
 }
 
 //solution
@@ -414,8 +439,8 @@ var interval = setInterval(() => {
 }, timeToMove);
 
 function nextStep() {
+    
     let comand = actions.shift()
-    console.log(comand)
     if(comand == LEFT) leftClick()
     if(comand == RIGHT) rightClick()
     if(comand == TOP) upClick()
