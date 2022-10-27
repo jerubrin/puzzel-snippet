@@ -66,6 +66,47 @@ function findElenetsList(parent) {
     if(parent == document.body && resElement == null) {
         isOtherWay = true
         resElement = tryToFindAnOtherWay(document.body)
+    } else {
+        isOtherWay = false
+    }
+    let flatArr = parent == document.body ?
+        !isOtherWay ?
+            [...resElement.children].map(it => Number(it.textContent)) :
+            [...resElement].map(it => Number(it.textContent)) 
+        : []
+    if(parent == document.body 
+        && flatArr.reduce((w, c, i) => w && (c == (i + 1) || c == 0), true)
+    ) {
+        if(flatArr.length**(1/2) != Math.trunc(flatArr.length**(1/2))) {
+            withoutZeroMode = true
+            flatArr.push(0)
+            size = Math.trunc(flatArr.length**(1/2))
+            sizeIsSetted()
+            showDialogMessage('ВЫБЕРИТЕ ПОЗИЦИЮ ПУСТОГО ЭЛЛЕМЕНТА', setZeroInArr)
+        } else {
+            size = Math.trunc(flatArr.length**(1/2))
+            sizeIsSetted()
+        }
+        let newResElement = []
+        
+        console.log(resElement.children)
+        let flatArrNodes = !isOtherWay ? [...resElement.children] : [...resElement]
+        let objArr = flatArrNodes.map(it => {return {
+            x: it.getBoundingClientRect().x,
+            y: it.getBoundingClientRect().y,
+            num: Number(it.textContent.split('').filter(it => it != ' ' && it != '\n').join('')),
+            element: it
+        }}).sort((a, b) => a.y - b.y)
+        let newResArray = new Array(size)
+        for(let i = 0; i < size; i++) {
+            newResArray[i] = objArr.slice(i*size, i*size+size)
+                .sort((a, b) => a.x - b.x)
+                .map(it => it.element)
+        }
+        console.log(newResArray)
+        isOtherWay = true
+        console.log(newResArray.flat())
+        return newResArray.flat()
     }
     return resElement
 }
@@ -131,7 +172,19 @@ function setAllToMoves() {
     } else {
         cleanMode = false
     }
-    
+    let flatArr = !isOtherWay ?
+            [...field.children].map(it => Number(it.textContent)) :
+            [...field].map(it => Number(it.textContent))
+    if(flatArr.length**(1/2) != Math.trunc(flatArr.length**(1/2))) {
+        withoutZeroMode = true
+        flatArr.push(0)
+        size = Math.trunc(flatArr.length**(1/2))
+        sizeIsSetted()
+        showDialogMessage('ВЫБЕРИТЕ ПОЗИЦИЮ ПУСТОГО ЭЛЛЕМЕНТА', setZeroInArr)
+    } else {
+        size = Math.trunc(flatArr.length**(1/2))
+        sizeIsSetted()
+    }
     arr = getArrFromScreen(field)
     let [_I, _J] = getElementHere(0)
     if(_I == -1 || _J == -1) {
