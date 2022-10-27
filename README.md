@@ -7,7 +7,7 @@
 4. Выбираем где находится пустое поле (если сниппет спросит)
 5. Жмем Chek It! и/или Slove It!
 
-https://user-images.githubusercontent.com/60064512/198208787-b877a977-e341-4d8b-ae3b-f86a8a69db7a.mov
+https://user-images.githubusercontent.com/60064512/198353884-40c1d5d5-68cd-4665-83dd-88baeb283f6e.mov
 
 Не работает c канвасом... и там, где не используется отличный от click обработчик событий.
 
