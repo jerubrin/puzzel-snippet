@@ -1,6 +1,6 @@
 {
 
-let timeToMove = 1010
+let timeToMove = 1000
 let arr = []
 let cleanMode = true
 let size = 0
@@ -281,9 +281,7 @@ style.innerHTML = `
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 6px;
-    background: #85edee52;
-    border-top: 2px solid #74b5b56e;
+    background: #b9ededed;
     z-index: 999998;
 }
 .control__button {
@@ -312,7 +310,41 @@ style.innerHTML = `
     border-radius: 5px;
     background: #6ddae2;
     color: #395d5f;
-}`
+}
+.control__time {
+    display: flex;
+    margin: 10px;
+    align-items: center;
+}
+.control__time-text {
+    margin: 0 10px;
+    color: #395d5f;
+}
+.control__time-input {
+    background: #d2dfdfde;
+    border: 2px solid #74b5b5ba;
+    border-radius: 5px;
+    font-weight: 900;
+    color: #395d5f;
+    padding: 6px 12px;
+}
+.control__position {
+    width: 100%;
+    text-align: center;
+    color: #23b1c0;
+    cursor: pointer;
+    max-height: 20px;
+}
+.control__position:hover {
+    color: #ffffff;
+    background: #23b1c0;
+}
+.controls__to-up {
+    flex-direction: column-reverse;
+    top: 0 !important;
+    bottom: auto;
+}
+`
 function sizeIsSetted() {
     let style2 = document.createElement('style')
     style2.innerHTML = `
@@ -339,8 +371,10 @@ function sizeIsSetted() {
 document.getElementsByTagName('head')[0].appendChild(style);
 
 function showControls() {
-    controls = createNewElement('.control');
+    controls = createNewElement('.control')
     const root = document.body
+    const clickUp = createNewElement('.control__position=△ △ △') //▽ ▽ ▽
+    clickUp.onclick = moveControls
     const controlsBtns = createNewElement('.control__buttons')
     const textMessage = createNewElement('.control__text-message')
     const buttonCheck = createNewElement('button.control__button=Check it!') // isSlovable
@@ -348,8 +382,14 @@ function showControls() {
     const buttonStart = createNewElement('button.control__button=Slove it!')
     buttonStart.onclick = () => {sloveIt()}
 
+    const timeBlock = createNewElement('.control__time')
+    const textTime = createNewElement('p.control__time-text=Скорость клика (мс):')
+    const inputTime = createNewElement(`input.control__time-input`)
+    inputTime.value = timeToMove
+    timeBlock.append(textTime, inputTime)
+
     controlsBtns.append(buttonCheck, buttonStart)
-    controls.append(textMessage, controlsBtns)
+    controls.append(clickUp, textMessage, controlsBtns, timeBlock)
     root.appendChild(controls)
 }
 
@@ -371,6 +411,10 @@ function hideGrid() {
         gridButtons.innerHTML = ''
         try{controls.removeChild(gridButtons)}catch(e){}
     }
+}
+function moveControls() {
+    this.textContent = this.textContent == '△ △ △' ? '▽ ▽ ▽' : '△ △ △'
+    controls.classList.toggle('controls__to-up')
 }
 
 // CHECKER
@@ -405,6 +449,8 @@ function moveItUp() {
 // SLOVER
 
 function sloveIt() {
+    let newTime = document.querySelector('input.control__time-input').value
+    timeToMove = isNaN(newTime) ? Number(timeToMove) : Number(newTime)
     solution()
     hideGrid()
 }
@@ -431,16 +477,17 @@ let finalArr = []
 function solution() {
     countsIsFinish = false
     isStarted = true
+    timeToMove += 10
+    var interval = setInterval(() => {
+        if(!isStarted) actions = []
+        if(actions.length > 0 && isStarted && countsIsFinish) nextStep()
+    }, timeToMove);
     solStart()
 }
-var interval = setInterval(() => {
-    if(!isStarted) actions = []
-    if(actions.length > 0 && isStarted && countsIsFinish) nextStep()
-}, timeToMove);
 
 function nextStep() {
-    
     let comand = actions.shift()
+    console.log(comand)
     if(comand == LEFT) leftClick()
     if(comand == RIGHT) rightClick()
     if(comand == TOP) upClick()
