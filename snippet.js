@@ -1,4 +1,6 @@
-let timeToMove = 1010
+{
+
+let timeToMove = 2010
 let arr = []
 let cleanMode = true
 let size = 0
@@ -71,6 +73,11 @@ function setAllToMoves() {
     }
     
     arr = getArrFromScreen(field)
+    let [_I, _J] = getElementHere(0)
+    if(_I == -1 || _J == -1) {
+        let [zI, zJ] = getElementHere(size**2)
+        arr[zI, zJ] = 0
+    }
     showControls()
 }
 
@@ -254,7 +261,7 @@ style.innerHTML = `
     margin-top: auto;
     background: rgba(9, 70, 83, 0.7);
     transition: all .5s;
-    z-index: 1000;
+    z-index: 999999;
 }
 @media screen and (min-width: 800px) {
     .win-modal {
@@ -293,6 +300,7 @@ style.innerHTML = `
     padding: 6px;
     background: #85edee52;
     border-top: 2px solid #74b5b56e;
+    z-index: 999998;
 }
 .control__button {
     color: #084142;
@@ -792,4 +800,6 @@ function strfy(arrSlover) {
         str += JSON.stringify(arrSlover[i]) + '\n'
     }
     return str
+}
+
 }
