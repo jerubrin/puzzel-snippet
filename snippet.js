@@ -613,7 +613,8 @@
     // CHECKER
     
     function checkGameArray() {
-        console.log(strfy(arr))
+        //console.log(strfy(arr))
+        console.table(arr)
         arr4check = JSON.parse(JSON.stringify(arr))
         moveItUp()
         let number = arr4check.flat().map((it, i, a) => {
